@@ -18,6 +18,7 @@ def database_connect() -> bool:
 
 
 def add_member_to_base(userinfo: telebot.types.Message) -> bool:
+    '''+ к базе '''
     pass
 
 
