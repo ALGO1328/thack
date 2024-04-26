@@ -27,10 +27,10 @@ def main():
                 try:
                     await BOT.send_message(message.chat.id, text='Вы успешно зарегистрировались')
                     await logs.write(f'{time.hour}:{time.minute}:{time.second}: Пользователь'
-                                     f' {message.from_user.username} зарегистрирован успешно')
+                                     f' {message.from_user.username} зарегистрирован успешно \n')
                 except:
                     await logs.write(f'{time.hour}:{time.minute}:{time.second}: '
-                                     f'Ошибка регистрации {message.from_user.username}')
+                                     f'Ошибка регистрации {message.from_user.username} \n')
 
     @BOT.message_handler(commands=['instructions', 'instruct', 'inst'])
     async def instructions(message):
@@ -38,12 +38,30 @@ def main():
 
     @BOT.message_handler(commands=['meet'])
     async def meet(message):
+
         if not database_users.check_user_exist(message):
             await BOT.send_message(message.chat.id, text='Для начала Вам нужно зарегистрироваться командой /reg')
-        c_args = list(map(str, message.text.split()))[1:]
-        userlist = []
-        for arg in c_args:
+            return
+
+        if '@' not in message.text or ' ' not in message.text or '/meet' not in message.text:
+            await BOT.send_message(message.chat.id, text='Команда введена неверно')
+            return
+
+        tempdata.update({message.chat.id: {'userlist': list(),
+                                           'timeargs': list(),
+                                           'c_args': list()}})
+        tempdata[message.chat.id]['c_args'] = list(map(str, message.text.split()))[1:]
+        for arg in tempdata[message.chat.id]['c_args']:
+            if '@' in arg:
+                tempdata[message.chat.id]['userlist'].append(arg)
+            else:
+                tempdata[message.chat.id]['timeargs'].append(arg)
+
+        if not tempdata[message.chat.id]['timeargs']:
+
+
 
 if __name__ == '__main__':
+    tempdata = {}
     BOT = AsyncTeleBot(token=config.TOKEN)
     logs = open('logs.txt', 'w')
