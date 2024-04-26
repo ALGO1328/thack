@@ -15,6 +15,12 @@ import database_users
 
 
 def main():
+
+    async def sendmeetinfo(message, member_id_list):
+        for user_id in member_id_list:
+            await BOT.send_message(user_id, )
+
+
     @BOT.message_handler(commands=['register', 'reg', 'start'])
     async def register(message):
         if database_users.check_user_exist(message):
@@ -47,17 +53,19 @@ def main():
             await BOT.send_message(message.chat.id, text='Команда введена неверно')
             return
 
-        tempdata.update({message.chat.id: {'userlist': list(),
+        tempdata.update({message.chat.id: {'usernameslist': list(),
                                            'timeargs': list(),
-                                           'c_args': list()}})
+                                           'c_args': list(),
+                                           'useridslist': list()}})
         tempdata[message.chat.id]['c_args'] = list(map(str, message.text.split()))[1:]
         for arg in tempdata[message.chat.id]['c_args']:
             if '@' in arg:
-                tempdata[message.chat.id]['userlist'].append(arg)
+                tempdata[message.chat.id]['usernameslist'].append(arg)
             else:
                 tempdata[message.chat.id]['timeargs'].append(arg)
 
         if not tempdata[message.chat.id]['timeargs']:
+
 
 
 
