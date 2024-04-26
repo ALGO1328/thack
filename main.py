@@ -36,12 +36,13 @@ def main():
     async def instructions(message):
         await BOT.send_message(message.chat.id, text=config.INSTRUCTIONS)
 
-
     @BOT.message_handler(commands=['meet'])
     async def meet(message):
-        if not(database_users.check_user_exist(message)):
-
-
+        if not database_users.check_user_exist(message):
+            await BOT.send_message(message.chat.id, text='Для начала Вам нужно зарегистрироваться командой /reg')
+        c_args = list(map(str, message.text.split()))[1:]
+        userlist = []
+        for arg in c_args:
 
 if __name__ == '__main__':
     BOT = AsyncTeleBot(token=config.TOKEN)
