@@ -33,6 +33,15 @@ def check_user_exist(userinfo: telebot.types.Message) -> bool:
     else:
         return False
 
+def get_userid(uname: str) -> str:
+    try:
+        c = conn.cursor()
+        c.execute(f"SELECT id FROM users WHERE name={uname}")
+        user_id = c.fetchall()
+        return(str(user_id))
+    except sqlite3.Error as e:
+        return('')
+
 
 def register_user(userinfo: telebot.types.Message) -> bool:
     try:
