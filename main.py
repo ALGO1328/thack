@@ -28,3 +28,4 @@ def send_message(chat_id, text):
 
 if __name__ == '__main__':
     app.run(host='cf31200.tw1.ru')
+

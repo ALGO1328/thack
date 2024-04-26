@@ -1,14 +1,8 @@
 import datetime
 
-import psycopg2
-
-import datetime
-
 import pytz
 
 import telebot.types
-
-import config
 
 logs = open('logs.txt', 'w')
 
