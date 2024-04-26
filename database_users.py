@@ -15,16 +15,24 @@ conn = sqlite3.connect('database.db')
 def database_connect() -> bool:
     try:
         conn = sqlite3.connect('database.db')
-        logs.write('connected to database succesfully' + now.strftime("%H:%M:%S") + '\n')
+        logs.write('Database connection SUCCESS' + now.strftime("%H:%M:%S") + '\n')
         return True
     except sqlite3.Error as e:
         logs.write('Database connection FAIL' + now.strftime("%H:%M:%S") + '\n')
         return False
 
 def check_user_exist(userinfo: telebot.types.Message) -> bool:
-    return True
-    pass
-
+    try:
+        c = conn.cursor()
+        c.execute("SELECT id FROM users")
+        user_id = c.fetchall()
+        for id in user_id:
+            if id == userinfo.chat.id:
+                logs.write('User exists' + now.strftime("%H:%M:%S") + '\n')
+                return True
+    except sqlite3.Error as e:
+        logs.write('No user found' + now.strftime("%H:%M:%S") + '\n')
+        return False
 
 def register_user(userinfo: telebot.types.Message) -> bool:
     try:
@@ -34,7 +42,6 @@ def register_user(userinfo: telebot.types.Message) -> bool:
         return True
     except sqlite3.Error as e:
         return False
-
 
 def add_meeting(creator, time, URL) -> bool:
     try:
