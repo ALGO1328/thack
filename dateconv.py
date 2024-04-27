@@ -1,5 +1,6 @@
 import datetime
 import time
+import pytz
 
 logs = open('logs.txt', 'w')
 
@@ -8,15 +9,15 @@ now = datetime.datetime.now(pytz.timezone("Europe/Moscow"))
 def checkdate(timeinfo) -> bool:
     for t in timeinfo:
         if t.count(':') != 0:
-            time = list(map(str, i.split(':')))
+            time = list(map(str, t.split(':')))
         else:
-            date = list(map(str, i.split('.')))
+            date = list(map(str, t.split('.')))
 
 
     if len(date) == 3:
         year = date[2]
     else:
-        year = datetime.date.today.().year
+        year = datetime.date.today().year
     month = int(date[1])
     day = int(date[0])
 

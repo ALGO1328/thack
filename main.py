@@ -22,9 +22,9 @@ import asyncio
 
 
 async def main():
-
     async def get_meeting_link(*args):
         pass
+
     async def invited_users_checker(userlist):
         for username in userlist:
             if database_users.check_user_exist_by_username(username):
@@ -56,9 +56,11 @@ async def main():
                     logs.write(f'{time.hour}:{time.minute}:{time.second}: '
                                f'Ошибка регистрации {message.from_user.username} \n')
 
+
     @BOT.message_handler(commands=['instructions', 'instruct', 'inst'])
     async def instructions(message):
         await BOT.send_message(message.chat.id, text=config.INSTRUCTIONS)
+
 
     @BOT.message_handler(commands=['meet'])
     async def meet(message):
@@ -89,11 +91,22 @@ async def main():
             tempdata[message.chat.id]['meet'].add_creator(message.chat.id)
             tempdata[message.chat.id]['meet'].add_link(get_meeting_link())
             tempdata[message.chat.id]['meet'].add_members(tempdata[message.chat.id]['members_list'])
-            if not(invited_users_checker(tempdata[message.chat.id]['members_list'])):
-                await BOT.send_message(message.chat.id, text='Не все пользователи зарегистрировались в этом боте')
+            if not (invited_users_checker(tempdata[message.chat.id]['members_list'])):
+                await BOT.send_message(message.chat.id, text='❗ Не все приглашенные пользователи '
+                                                             'зарегистрировались в этом боте')
+                return
+            if await sendmeetinfo(tempdata[message.chat.id]['meet']):
+                await BOT.send_message(message.chat.id, text='ℹ️ Приглашения успешно отправлены')
+
         else:
-            dateconv.checkdate(tempdata[message.chat.id]['timeargs'])
-            dateconv.tounix(tempdata[message.chat.id]['timeargs'])
+            if not dateconv.checkdate(tempdata[message.chat.id]['timeargs']):
+                await BOT.send_message(message.chat.id, text='❗ Проверьте правильность ввода даты вчтречи '
+                                                             'Используйте /inst для получения инструкции')
+                return
+            if not (invited_users_checker(tempdata[message.chat.id]['members_list'])):
+                await BOT.send_message(message.chat.id, text='❗ Не все приглашенные пользователи '
+                                                             'зарегистрировались в этом боте')
+                return
 
     await BOT.infinity_polling()
 
