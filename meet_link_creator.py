@@ -74,7 +74,7 @@ def createMeeting(creator, start_time):
 
 # Example usage
 if __name__ == "__main__":
-    creator = "John Doe"
+    creator = "Damir"
     start_time = datetime.datetime(2024, 4, 30, 10, 0)  # Example: April 30, 2024, 10:00 AM
 
     join_url, password = createMeeting(creator, start_time)
