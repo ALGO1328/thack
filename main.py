@@ -22,7 +22,7 @@ def main():
         pass
 
     async def sendmeetinfo(meet: Meeting) -> bool:
-        for user_id in meet.:
+        for user_id in meet:
             await BOT.send_message(user_id, )
 
     @BOT.message_handler(commands=['register', 'reg', 'start'])
