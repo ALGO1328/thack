@@ -2,8 +2,11 @@ import datetime
 import time
 import pytz
 
+# acceptable timeinfo format:
+# ['12.08', '23:45']
+# ['01:01', '20.11.2025']
 
-def checkdate(timeinfo) -> bool:
+def checkdate(timeinfo: list) -> bool:
     for t in timeinfo:
         if t.count(':') != 0:
             time = list(map(str, t.split(':')))
@@ -41,7 +44,7 @@ def checkdate(timeinfo) -> bool:
     return is_future and correct_date
 
 
-def to_unix(timeinfo) -> float:
+def to_unix(timeinfo: list) -> int:
     for t in timeinfo:
         if t.count(':') != 0:
             time = t.split(':')
@@ -59,8 +62,8 @@ def to_unix(timeinfo) -> float:
     minute = int(time[1])
 
     dt = datetime.datetime(year, month, day, hour, minute)
-    return (dt - datetime.datetime(1970, 1, 1)).total_seconds()
+    return int((dt - datetime.datetime(1970, 1, 1)).total_seconds())
 
 
-def from_unix(unixtime: int):
+def from_unix(unixtime: int) -> datetime:
     return datetime.datetime.fromtimestamp(unixtime)

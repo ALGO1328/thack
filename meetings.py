@@ -4,6 +4,8 @@ import time
 
 import pytz
 
+import dateconv
+
 
 class Meeting:
     def __init__(self):
@@ -24,18 +26,13 @@ class Meeting:
     def add_members(self, members):
         self.members = members
 
-    def get_info(self) -> str:  # Вас прглашает на встречу .. .. . (через #TODO
-        now = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
-        unix_time = time.mktime(now.timetuple())
-        last_time = self.time - unix_time
+    def get_info(self) -> str:  # Вас прглашает на встречу .. .. . (через
+        event_time = dateconv.from_unix(self.time)
+        dt = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
+        unix_now = int((dt - datetime.datetime(1970, 1, 1)).total_seconds())
+        time_to_event = str(datetime.timedelta(seconds=self.time - unix_now))
 
-        if int(last_time.strftime('%d')) == 0 and int(last_time.strftime('%m')) == 0:
-            last_time = last_time.strftime('%H час. %M мин.')
-        elif int(last_time.strftime('%m')) == 0 and int(last_time.strftime('%d')) != 0:
-            last_time = last_time.strftime('%d д. %H час. %M мин.')
-        else:
-            last_time = last_time.strftime('%d д. %H час. %M мин.')
         return (f'Вас приглашает на встречу {self.creator}, '
                 f'дата: {datetime.datetime.fromtimestamp(self.time, datetime.UTC).strftime('%d.%m.%Y')} '
-                f'в {datetime.datetime.fromtimestamp(self.time, pytz.timezone('Europe/Moscow')).strftime('%H:%M')} '
-                f'(через: {last_time} )')
+                f'в {datetime.datetime(event_time).strftime("%H:%M")}' 
+                f'(через: {time_to_event} )')
