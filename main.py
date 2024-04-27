@@ -1,6 +1,7 @@
 import telebot
 
 from telebot import types
+
 from telebot.async_telebot import AsyncTeleBot
 
 import telebot
@@ -16,31 +17,35 @@ from meetings import Meeting
 import database_users
 
 
-def main():
+import asyncio
+
+
+async def main():
 
     async def get_meeting_link(*args):
         pass
 
     async def sendmeetinfo(meet: Meeting) -> bool:
         for user_id in meet.members:
-            await BOT.send_message(user_id, text='вас приглашают...')
+            await BOT.send_message(user_id, text='🗓️ вас приглашают...')
 
     @BOT.message_handler(commands=['register', 'reg', 'start'])
     async def register(message):
+        await BOT.delete_message(message.chat.id, message.id)
         if database_users.check_user_exist(message):
-            await BOT.send_message(message.chat.id, text='Вы уже зарегистрированы! '
+            await BOT.send_message(message.chat.id, text='ℹ️ Вы уже зарегистрированы! '
                                                          '\nВведите /instruct чтобы увидеть'
                                                          ' инструкции по созданию созвона')
         else:
             if database_users.register_user(message):
                 time = datetime.datetime.now()
                 try:
-                    await BOT.send_message(message.chat.id, text='Вы успешно зарегистрировались')
-                    await logs.write(f'{time.hour}:{time.minute}:{time.second}: Пользователь'
-                                     f' {message.from_user.username} зарегистрирован успешно \n')
+                    await BOT.send_message(message.chat.id, text='✅ Вы успешно зарегистрировались')
+                    logs.write(f'{time.hour}:{time.minute}:{time.second}: Пользователь'
+                               f' {message.from_user.username} зарегистрирован успешно \n')
                 except:
-                    await logs.write(f'{time.hour}:{time.minute}:{time.second}: '
-                                     f'Ошибка регистрации {message.from_user.username} \n')
+                    logs.write(f'{time.hour}:{time.minute}:{time.second}: '
+                               f'Ошибка регистрации {message.from_user.username} \n')
 
     @BOT.message_handler(commands=['instructions', 'instruct', 'inst'])
     async def instructions(message):
@@ -50,11 +55,13 @@ def main():
     async def meet(message):
 
         if not database_users.check_user_exist(message):
-            await BOT.send_message(message.chat.id, text='Для начала Вам нужно зарегистрироваться командой /reg')
+            await BOT.send_message(message.chat.id, text='ℹ️ Для начала Вам нужно зарегистрироваться командой /reg')
             return
 
         if '@' not in message.text or ' ' not in message.text or '/meet' not in message.text:
-            await BOT.send_message(message.chat.id, text='Команда введена неверно')
+            await BOT.send_message(message.chat.id, text='❗ Команда введена неверно, '
+                                                         'используйте /inst для помощи в '
+                                                         'написании команды')
             return
 
         tempdata.update({message.chat.id: {'usernameslist': list(),
@@ -71,10 +78,14 @@ def main():
 
         if not tempdata[message.chat.id]['timeargs']:
             tempdata[message.chat.id]['meet'].add_creator(message.chat.id)
-            tempdata[message.chat.id]['meet'].add_link()
+            tempdata[message.chat.id]['meet'].add_link() #TODO
+            tempdata[message.chat.id]['meet'].add_members(tempdata[message.chat.id]['timeargs'])
+
+    await BOT.infinity_polling()
 
 
 if __name__ == '__main__':
     tempdata = {}
     BOT = AsyncTeleBot(token=config.TOKEN)
     logs = open('logs.txt', 'w')
+    asyncio.run(main())
