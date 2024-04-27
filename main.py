@@ -1,31 +1,80 @@
-from flask import Flask, request, jsonify
+import telebot
 
-import socket
+from telebot import types
+from telebot.async_telebot import AsyncTeleBot
 
-socket.getaddrinfo('cf31200.tw1.ru', port=8080)
+import telebot
 
-app = Flask(__name__)
+import config
 
+import asyncio
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    update = request.json
-    message = update.get('message')
-    if message:
-        text = message.get('text')
-        chat_id = message.get('chat').get('id')
-        sender = message.get('from').get('username')
-        response_text = f"Hello, {sender}! You said: {text}"
-        send_message(chat_id, response_text)
-    return jsonify({'status': 'ok'})
+import datetime
+
+from meetings import Meeting
+
+import database_users
 
 
-def send_message(chat_id, text):
-    # Function to send a message to Telegram using the Bot API
-    # You need to implement this function
-    pass  # Placeholder, implement your logic here
+def main():
+
+    async def get_meeting_link(*args):
+        pass
+
+    async def sendmeetinfo(meet: Meeting) -> bool:
+        for user_id in meet.:
+            await BOT.send_message(user_id, )
+
+    @BOT.message_handler(commands=['register', 'reg', 'start'])
+    async def register(message):
+        if database_users.check_user_exist(message):
+            await BOT.send_message(message.chat.id, text='Вы уже зарегистрированы! '
+                                                         '\nВведите /instruct чтобы увидеть'
+                                                         ' инструкции по созданию созвона')
+        else:
+            if database_users.register_user(message):
+                time = datetime.datetime.now()
+                try:
+                    await BOT.send_message(message.chat.id, text='Вы успешно зарегистрировались')
+                    await logs.write(f'{time.hour}:{time.minute}:{time.second}: Пользователь'
+                                     f' {message.from_user.username} зарегистрирован успешно \n')
+                except:
+                    await logs.write(f'{time.hour}:{time.minute}:{time.second}: '
+                                     f'Ошибка регистрации {message.from_user.username} \n')
+
+    @BOT.message_handler(commands=['instructions', 'instruct', 'inst'])
+    async def instructions(message):
+        await BOT.send_message(message.chat.id, text=config.INSTRUCTIONS)
+
+    @BOT.message_handler(commands=['meet'])
+    async def meet(message):
+
+        if not database_users.check_user_exist(message):
+            await BOT.send_message(message.chat.id, text='Для начала Вам нужно зарегистрироваться командой /reg')
+            return
+
+        if '@' not in message.text or ' ' not in message.text or '/meet' not in message.text:
+            await BOT.send_message(message.chat.id, text='Команда введена неверно')
+            return
+
+        tempdata.update({message.chat.id: {'usernameslist': list(),
+                                           'timeargs': list(),
+                                           'c_args': list(),
+                                           'useridslist': list(),
+                                           'meet': Meeting()}})
+        tempdata[message.chat.id]['c_args'] = list(map(str, message.text.split()))[1:]
+        for arg in tempdata[message.chat.id]['c_args']:
+            if '@' in arg:
+                tempdata[message.chat.id]['usernameslist'].append(arg)
+            else:
+                tempdata[message.chat.id]['timeargs'].append(arg)
+
+        if not tempdata[message.chat.id]['timeargs']:
+            tempdata[message.chat.id]['meet'].add_creator(message.chat.id)
+            tempdata[message.chat.id]['meet'].add_link()
 
 
 if __name__ == '__main__':
-    app.run(host='cf31200.tw1.ru')
-
+    tempdata = {}
+    BOT = AsyncTeleBot(token=config.TOKEN)
+    logs = open('logs.txt', 'w')
