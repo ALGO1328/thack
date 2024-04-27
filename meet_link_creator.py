@@ -5,7 +5,7 @@ import hmac
 import hashlib
 import base64
 
-# Enter your API key and your API secret
+# Найди правильные API_KEY и API_SEC и я тебя не убью
 API_KEY = 'jV5p1MXGTtqcvzDPEu4WA'
 API_SEC = 'TPUt9gOJXnaPtkSGeLZDz6wTw4NA79kC'
 
