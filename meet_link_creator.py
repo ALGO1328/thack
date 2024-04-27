@@ -35,7 +35,7 @@ def generateToken():
 
 
 # create json data for post requests
-def meemeetingdetails(creator: str,time: int ):
+def meetingdetails(creator: str,time: int ):
     meetingdetails = {"topic": f"Встреча {creator}",
                     "type": 2,
                     "start_time": f"{dateconv.from_unix(time)}",
@@ -55,14 +55,15 @@ def meemeetingdetails(creator: str,time: int ):
                                 "auto_recording": "cloud"
                                }
                   }
+    return meetingdetails
 
 
-def createMeeting(creator):
+def createMeeting(creator, time):
     headers = {'authorization': 'Bearer ' + generateToken(),
                'content-type': 'application/json'}
     r = requests.post(
         f'https://api.zoom.us/v2/users/me/meetings',
-        headers=headers, data=json.dumps(meetingdetails))
+        headers=headers, data=json.dumps(meetingdetails(creator, time)))
 
     print("\n creating zoom meeting ... \n")
     # print(r.text)
