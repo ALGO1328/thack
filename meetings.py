@@ -24,7 +24,7 @@ class Meeting:
     def add_members(self, members):
         self.members = members
 
-    def get_info(self):
+    def get_info(self) -> str:  # Вас прглашает на встречу .. .. . (через #TODO
         now = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
         unix_time = time.mktime(now.timetuple())
         last_time = self.time - unix_time
