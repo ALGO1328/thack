@@ -10,6 +10,8 @@ import config
 
 import asyncio
 
+import dateconv
+
 import datetime
 
 from meetings import Meeting
@@ -78,18 +80,20 @@ async def main():
                                            'meet': Meeting()}})
         tempdata[message.chat.id]['c_args'] = list(map(str, message.text.split()))[1:]
         for arg in tempdata[message.chat.id]['c_args']:
+            print(arg)
             if '@' in arg:
-                tempdata[message.chat.id]['memebers_list'].append(arg)
+                tempdata[message.chat.id]['members_list'].append(arg)
             else:
                 tempdata[message.chat.id]['timeargs'].append(arg)
-
         if not tempdata[message.chat.id]['timeargs']:
             tempdata[message.chat.id]['meet'].add_creator(message.chat.id)
             tempdata[message.chat.id]['meet'].add_link(get_meeting_link())
             tempdata[message.chat.id]['meet'].add_members(tempdata[message.chat.id]['members_list'])
             if not(invited_users_checker(tempdata[message.chat.id]['members_list'])):
                 await BOT.send_message(message.chat.id, text='Не все пользователи зарегистрировались в этом боте')
-
+        else:
+            dateconv.checkdate(tempdata[message.chat.id]['timeargs'])
+            dateconv.tounix(tempdata[message.chat.id]['timeargs'])
 
     await BOT.infinity_polling()
 
