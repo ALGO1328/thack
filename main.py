@@ -16,6 +16,7 @@ from meetings import Meeting
 
 import database_users
 
+import meet_link_creator
 
 import asyncio
 
@@ -24,15 +25,22 @@ async def main():
 
     async def get_meeting_link(*args):
         pass
+    async def invited_users_checker(userlist):
+        for user in userlist:
+            if database_users.check_user_exist(user):
 
     async def sendmeetinfo(meet: Meeting) -> bool:
-        for user_id in meet.members:
-            await BOT.send_message(user_id, text='🗓️ вас приглашают...')
+        try:
+            for user_id in meet.members:
+                await BOT.send_message(user_id, text=meet.get_info())
+            return True
+        except:
+            return False
 
     @BOT.message_handler(commands=['register', 'reg', 'start'])
     async def register(message):
         await BOT.delete_message(message.chat.id, message.id)
-        if database_users.check_user_exist(message):
+        if database_users.check_user_exist(message.chat.id):
             await BOT.send_message(message.chat.id, text='ℹ️ Вы уже зарегистрированы! '
                                                          '\nВведите /instruct чтобы увидеть'
                                                          ' инструкции по созданию созвона')
@@ -54,7 +62,7 @@ async def main():
     @BOT.message_handler(commands=['meet'])
     async def meet(message):
 
-        if not database_users.check_user_exist(message):
+        if not database_users.check_user_exist(message.chat.id):
             await BOT.send_message(message.chat.id, text='ℹ️ Для начала Вам нужно зарегистрироваться командой /reg')
             return
 
@@ -64,7 +72,7 @@ async def main():
                                                          'написании команды')
             return
 
-        tempdata.update({message.chat.id: {'usernameslist': list(),
+        tempdata.update({message.chat.id: {'members_list': list(),
                                            'timeargs': list(),
                                            'c_args': list(),
                                            'useridslist': list(),
@@ -72,14 +80,15 @@ async def main():
         tempdata[message.chat.id]['c_args'] = list(map(str, message.text.split()))[1:]
         for arg in tempdata[message.chat.id]['c_args']:
             if '@' in arg:
-                tempdata[message.chat.id]['usernameslist'].append(arg)
+                tempdata[message.chat.id]['memebers_list'].append(arg)
             else:
                 tempdata[message.chat.id]['timeargs'].append(arg)
 
         if not tempdata[message.chat.id]['timeargs']:
             tempdata[message.chat.id]['meet'].add_creator(message.chat.id)
-            tempdata[message.chat.id]['meet'].add_link() #TODO
-            tempdata[message.chat.id]['meet'].add_members(tempdata[message.chat.id]['timeargs'])
+            tempdata[message.chat.id]['meet'].add_link(get_meeting_link())
+            tempdata[message.chat.id]['meet'].add_members(tempdata[message.chat.id]['members_list'])
+            if sendmeetinfo(tempdata[message.chat.id]['meet']):
 
     await BOT.infinity_polling()
 

@@ -24,11 +24,11 @@ def database_connect() -> bool:
         return False
 
 
-def check_user_exist(userinfo: telebot.types.Message) -> bool:
+def check_user_exist(user_id) -> bool:
     c = conn.cursor()
-    c.execute(f"SELECT id FROM users WHERE id={userinfo.chat.id}")
-    user_id = c.fetchall()
-    if user_id:
+    c.execute(f"SELECT id FROM users WHERE id={user_id}")
+    found_user_id = c.fetchall()
+    if found_user_id:
         return True
     else:
         return False
@@ -54,11 +54,11 @@ def register_user(userinfo: telebot.types.Message) -> bool:
         return False
 
 
-def add_meeting(creator, time, URL) -> bool:
-    try:
-        c = conn.cursor()
-        c.execute("INSERT INTO meetings (time, creator, URL) VALUES (?, ?, ?)", (time, creator, URL))
-        conn.commit()
+def check_user_exist_by_username(username) -> bool:
+    c = conn.cursor()
+    c.execute(f"SELECT name FROM users WHERE id={username}")
+    found_username = c.fetchall()
+    if found_username:
         return True
-    except sqlite3.Error as e:
+    else:
         return False
