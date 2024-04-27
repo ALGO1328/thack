@@ -22,8 +22,8 @@ def main():
         pass
 
     async def sendmeetinfo(meet: Meeting) -> bool:
-        for user_id in meet:
-            await BOT.send_message(user_id, )
+        for user_id in meet.members:
+            await BOT.send_message(user_id, text='вас приглашают...')
 
     @BOT.message_handler(commands=['register', 'reg', 'start'])
     async def register(message):

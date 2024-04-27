@@ -27,11 +27,14 @@ class Meeting:
     def get_info(self):
         now = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
         unix_time = time.mktime(now.timetuple())
-        last_time = datetime.datetime.fromtimestamp(self.time-unix_time, pytz.timezone('Europe/Moscow'))
-        if int(last_time.strftime('%D')) == 0:
+        last_time = self.time - unix_time
+
+        if int(last_time.strftime('%d')) == 0 and int(last_time.strftime('%m')) == 0:
             last_time = last_time.strftime('%H час. %M мин.')
+        elif int(last_time.strftime('%m')) == 0 and int(last_time.strftime('%d')) != 0:
+            last_time = last_time.strftime('%d д. %H час. %M мин.')
         else:
-            last_time = last_time.strftime('%D д. %H час. %M мин.')
+            last_time = last_time.strftime('%d д. %H час. %M мин.')
         return (f'Вас приглашает на встречу {self.creator}, '
                 f'дата: {datetime.datetime.fromtimestamp(self.time, datetime.UTC).strftime('%d.%m.%Y')} '
                 f'в {datetime.datetime.fromtimestamp(self.time, pytz.timezone('Europe/Moscow')).strftime('%H:%M')} '
