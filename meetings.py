@@ -1,20 +1,38 @@
 import datetime
-import calendar
+
+import time
 
 import pytz
 
 
 class Meeting:
-    def __init__(self, time, link, creator):
-        if time:
-            self.time = time
-        else:
-            self.time = datetime.datetime.now()
+    def __init__(self, time: int, link, creator, members):
+        self.time = None
+        self.link = None
+        self.creator = None
+        self.members = None
 
+    def add_link(self, link):
         self.link = link
+
+    def add_time(self, time):
+        self.time = time
+
+    def add_creator(self, creator):
         self.creator = creator
+
+    def add_members(self, members):
+        self.members = members
 
     def get_info(self):
         now = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
-        datetime.time
-        return f''
+        unix_time = time.mktime(now.timetuple())
+        last_time = datetime.datetime.fromtimestamp(self.time-unix_time, pytz.timezone('Europe/Moscow'))
+        if int(last_time.strftime('%D')) == 0:
+            last_time = last_time.strftime('%H час. %M мин.')
+        else:
+            last_time = last_time.strftime('%D д. %H час. %M мин.')
+        return (f'Вас приглашает на встречу {self.creator}, '
+                f'дата: {datetime.datetime.fromtimestamp(self.time, datetime.UTC).strftime('%d.%m.%Y')} '
+                f'в {datetime.datetime.fromtimestamp(self.time, pytz.timezone('Europe/Moscow')).strftime('%H:%M')} '
+                f'(через: {last_time} )')

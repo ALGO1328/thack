@@ -11,15 +11,19 @@ import asyncio
 
 import datetime
 
+from meetings import Meeting
+
 import database_users
 
 
 def main():
 
-    async def sendmeetinfo(message, member_id_list):
-        for user_id in member_id_list:
-            await BOT.send_message(user_id, )
+    async def get_meeting_link(*args):
+        pass
 
+    async def sendmeetinfo(meet: Meeting) -> bool:
+        for user_id in meet.:
+            await BOT.send_message(user_id, )
 
     @BOT.message_handler(commands=['register', 'reg', 'start'])
     async def register(message):
@@ -56,7 +60,8 @@ def main():
         tempdata.update({message.chat.id: {'usernameslist': list(),
                                            'timeargs': list(),
                                            'c_args': list(),
-                                           'useridslist': list()}})
+                                           'useridslist': list(),
+                                           'meet': Meeting()}})
         tempdata[message.chat.id]['c_args'] = list(map(str, message.text.split()))[1:]
         for arg in tempdata[message.chat.id]['c_args']:
             if '@' in arg:
@@ -65,8 +70,8 @@ def main():
                 tempdata[message.chat.id]['timeargs'].append(arg)
 
         if not tempdata[message.chat.id]['timeargs']:
-
-
+            tempdata[message.chat.id]['meet'].add_creator(message.chat.id)
+            tempdata[message.chat.id]['meet'].add_link()
 
 
 if __name__ == '__main__':
