@@ -6,7 +6,7 @@ import pytz
 
 
 class Meeting:
-    def __init__(self, time: int, link, creator, members):
+    def __init__(self):
         self.time = None
         self.link = None
         self.creator = None
