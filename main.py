@@ -16,8 +16,6 @@ from meetings import Meeting
 
 import database_users
 
-import meet_link_creator
-
 import asyncio
 
 
@@ -26,8 +24,9 @@ async def main():
     async def get_meeting_link(*args):
         pass
     async def invited_users_checker(userlist):
-        for user in userlist:
-            if database_users.check_user_exist(user):
+        for username in userlist:
+            if database_users.check_user_exist_by_username(username):
+                pass
 
     async def sendmeetinfo(meet: Meeting) -> bool:
         try:
@@ -88,7 +87,9 @@ async def main():
             tempdata[message.chat.id]['meet'].add_creator(message.chat.id)
             tempdata[message.chat.id]['meet'].add_link(get_meeting_link())
             tempdata[message.chat.id]['meet'].add_members(tempdata[message.chat.id]['members_list'])
-            if sendmeetinfo(tempdata[message.chat.id]['meet']):
+            if not(invited_users_checker(tempdata[message.chat.id]['members_list'])):
+                await BOT.send_message(message.chat.id, text='Не все пользователи зарегистрировались в этом боте')
+
 
     await BOT.infinity_polling()
 
