@@ -10,9 +10,6 @@ import requests
 
 import json
 
-import meetings
-from meetings import Meeting
-
 import dateconv
 
 
@@ -38,28 +35,29 @@ def generateToken():
 
 
 # create json data for post requests
-meetingdetails = {"topic": f"Встреча {Meeting.creator}",
-                  "type": 2,
-                  "start_time": f"2019-06-14T10: 21: 57{dateconv.from_unix(meetings.Meeting)}",
-                  "duration": "45",
-                  "timezone": "Europe/Moscow",
-                  "agenda": "",
+def meemeetingdetails(creator: str,time: int ):
+    meetingdetails = {"topic": f"Встреча {creator}",
+                    "type": 2,
+                    "start_time": f"{dateconv.from_unix(time)}",
+                    "duration": "45",
+                    "timezone": "Europe/Moscow",
+                    "agenda": "",
 
-                  "recurrence": {"type": 1,
+                    "recurrence": {"type": 1,
                                  "repeat_interval": 1
                                  },
-                  "settings": {"host_video": "true",
-                               "participant_video": "true",
-                               "join_before_host": "true",
-                               "mute_upon_entry": "False",
-                               "watermark": "true",
-                               "audio": "voip",
-                               "auto_recording": "cloud"
+                    "settings": {"host_video": "true",
+                                "participant_video": "true",
+                                "join_before_host": "true",
+                                "mute_upon_entry": "False",
+                                "watermark": "true",
+                                "audio": "voip",
+                                "auto_recording": "cloud"
                                }
                   }
 
 
-def createMeeting():
+def createMeeting(creator):
     headers = {'authorization': 'Bearer ' + generateToken(),
                'content-type': 'application/json'}
     r = requests.post(
@@ -74,8 +72,4 @@ def createMeeting():
     meetingPassword = y["password"]
 
     return join_URL, meetingPassword
-
-def create_link(time=int((datetime.datetime.now() - datetime.datetime(1970, 1, 1)).total_seconds())):
-    print(time)
-    pass
 
