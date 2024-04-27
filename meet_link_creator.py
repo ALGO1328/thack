@@ -15,7 +15,6 @@ def create_space() -> meet.Space:
 
 
 def authorize() -> Credentials:
-    """Ensure valid credentials for calling the Meet REST API."""
     CLIENT_SECRET_FILE = "client_secret.json"
     credentials = None
 
