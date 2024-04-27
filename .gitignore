@@ -1,3 +1,6 @@
 .venv
 .idea
 config.py
+logs.txt
+requirements.txt
+database.db
