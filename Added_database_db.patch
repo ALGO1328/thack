@@ -1,0 +1,44 @@
+Subject: [PATCH] Added database.db
+---
+Index: database_users.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/database_users.py b/database_users.py
+--- a/database_users.py	(revision a6040d7583455a0155c08da1984515a9390d3723)
++++ b/database_users.py	(revision 90f9791e83763ee4d2498178c69680eaedacf3aa)
+@@ -14,9 +14,11 @@
+ 
+ def database_connect() -> bool:
+     try:
+-        logs.write(now.strftime("%Y-%m-%d %H:%M:%S") + '\n')
++        conn = sqlite3.connect('database.db')
++        logs.write('connected to database succesfully' + now.strftime("%H:%M:%S") + '\n')
+         return True
+     except sqlite3.Error as e:
++        logs.write('Database connection FAIL' + now.strftime("%H:%M:%S") + '\n')
+         return False
+ 
+ def check_user_exist(userinfo: telebot.types.Message) -> bool:
+@@ -28,7 +30,7 @@
+     try:
+         c = conn.cursor()
+         c.execute("INSERT INTO users (id, name) VALUES (userinfo.chat.id, userinfo.from_user.username)")
+-        logs.write(now.strftime("%Y-%m-%d %H:%M:%S") + '\n')
++        logs.write(now.strftime("%H:%M:%S") + '\n')
+         return True
+     except sqlite3.Error as e:
+         return False
+@@ -36,9 +38,9 @@
+ 
+ def add_meeting(creator, time, URL) -> bool:
+     try:
+-        c = conn.cursor
++        c = conn.cursor()
+         c.execute("INSERT INTO meetings (time, creator, URL) VALUES (time, creator, URL)")
+-        logs.write(now.strftime("%Y-%m-%d %H:%M:%S") + '\n')
++        logs.write(now.strftime("%H:%M:%S") + '\n')
+         return True
+     except sqlite3.Error as e:
+         return False
