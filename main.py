@@ -97,7 +97,7 @@ def main():
             for username in tempdata[message.chat.id]['members_list']:
                 if not database_users.check_user_exist_by_username(username.replace('@', '')):
                     BOT.send_message(message.chat.id, text='❗ Не все приглашенные пользователи '
-                                                                 'зарегистрировались в этом боте')
+                                                           'зарегистрировались в этом боте')
                     return
             if sendmeetinfo(tempdata[message.chat.id]['meet']):
                 BOT.send_message(message.chat.id, text='ℹ️ Приглашения успешно отправлены')
