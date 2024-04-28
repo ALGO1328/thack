@@ -5,43 +5,44 @@ import hmac
 import hashlib
 import base64
 
-# Найди правильные API_KEY и API_SEC и я тебя не убью
-API_KEY = 'jV5p1MXGTtqcvzDPEu4WA'
-API_SEC = 'TPUt9gOJXnaPtkSGeLZDz6wTw4NA79kC'
+mail = 'damir.riyatov@gmail.com'# will be creator mail
+Client_secret = 'CfI2vDSgbiIo8hpELrOuN1O1CQfPgP0s'
+Client_ID = 'ghwuvh95Rd2tLtfzA1s_0w'
+
+auth = Client_ID + ':' + Client_secret
 
 
-def generateToken():
-    payload = {
-        'iss': API_KEY,
-        'exp': int(datetime.datetime.utcnow().timestamp()) + 10900  # Token expires in 1 hour
+def generateToken(mail: str):
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": f"Basic {base64.b64encode(json.dumps(auth).encode()).decode().strip('=')}"
+
     }
 
-    header = {
-        'alg': 'HS256',
-        'typ': 'JWT'
+    body = {
+        "grant_type": "account_credentials",
+        "account_id": f"{mail}"
     }
 
-    header_encoded = base64.urlsafe_b64encode(json.dumps(header).encode()).decode().strip('=')
-    payload_encoded = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().strip('=')
+    r = requests.post("https://zoom.us/oauth/token", headers=headers, data=body)
 
-    data = header_encoded + '.' + payload_encoded
-    signature = hmac.new(API_SEC.encode(), msg=data.encode(), digestmod=hashlib.sha256).digest()
-    signature_encoded = base64.urlsafe_b64encode(signature).decode().strip('=')
-
-    return data + '.' + signature_encoded
+    return_data = r.json()
+    print(return_data)
+    access_token = return_data["access_token"]
+    return access_token
 
 
 def createMeeting(creator, start_time):
     headers = {
-        'authorization': f'Bearer {generateToken()}',
+        'authorization': f'Bearer {generateToken(mail)}',
         'content-type': 'application/json'
     }
 
     meeting_details = {
         "topic": f"Meeting created by {creator}",
         "type": 2,
-        "start_time": start_time.strftime('%Y-%m-%dT%H:%M:%S'),
-        "duration": "45",
+        "start_time": f"{start_time.strftime('%Y-%m-%dT%H:%M:%SZ')}",
+        "duration": "60",
         "timezone": "Europe/Moscow",
         "agenda": "",
         "recurrence": {"type": 1, "repeat_interval": 1},
@@ -50,7 +51,7 @@ def createMeeting(creator, start_time):
             "participant_video": "true",
             "join_before_host": "true",
             "mute_upon_entry": "False",
-            "watermark": "true",
+            "watermark": "false",
             "audio": "voip",
             "auto_recording": "cloud"
         }
