@@ -109,7 +109,7 @@ def main():
                                                              'Используйте /inst для получения инструкции')
                 return
             for username in tempdata[message.chat.id]['members_list']:
-                if True: #TODO
+                if True:
                     BOT.send_message(message.chat.id, text='❗ Не все приглашенные пользователи '
                                                                  'зарегистрировались в этом боте')
                     return
