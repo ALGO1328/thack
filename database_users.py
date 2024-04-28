@@ -25,6 +25,7 @@ def database_connect() -> bool:
 
 
 def check_user_exist(user_id) -> bool:
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute(f"SELECT id FROM users WHERE id={user_id}")
     found_user_id = c.fetchall()
@@ -33,31 +34,32 @@ def check_user_exist(user_id) -> bool:
     else:
         return False
 
-def get_userid(uname: str) -> str:
+def get_userid(uname: str):
     try:
+        conn = sqlite3.connect('database.db')
         c = conn.cursor()
-        c.execute(f"SELECT id FROM users WHERE name={uname}")
+        c.execute(f"SELECT id FROM users WHERE name=?", (uname, ))
         user_id = c.fetchall()
-        return(str(user_id))
-    except sqlite3.Error as e:
+        return(user_id)
+    except:
         return('')
 
 
-def register_user(userinfo: telebot.types.Message) -> bool:
-    try:
+def register_user(userinfo: telebot.types.Message, mail) -> bool:
+        conn = sqlite3.connect('database.db')
         c = conn.cursor()
-        c.execute(f"INSERT INTO users (id, name) VALUES (?, ?)",
-                  (str(userinfo.chat.id), str(userinfo.from_user.username.lower()).replace('@', '')))
+        c.execute(f"INSERT INTO users (id, name, mail) VALUES (?, ?, ?)",
+                  (str(userinfo.chat.id), str(userinfo.from_user.username.lower()).replace('@', ''),
+                   mail))
         conn.commit()
         return True
-    except sqlite3.Error as e:
-        return False
 
 
 def check_user_exist_by_username(username) -> bool:
+    conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    c.execute(f"SELECT id FROM users WHERE name={str(username.replace('@', ''))}")
-    found_id = c.fetchone()
+    c.execute(f"SELECT id FROM users WHERE name=?", (username, ))
+    found_id = c.fetchall()
     if found_id:
         return True
     else:
