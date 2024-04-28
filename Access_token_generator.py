@@ -72,10 +72,12 @@ if __name__ == '__main__':
 now = datetime.datetime.now(pytz.timezone("Europe/Moscow"))
 
 """
-CLIENT_ID = 'ghwuvh95Rd2tLtfzA1s_0w'
-CLIENT_SECRET = 'CfI2vDSgbiIo8hpELrOuN1O1CQfPgP0s'
+CLIENT_ID = 'EXVUKfCbRuWdXOrAV0wbRA'
+CLIENT_SECRET = '7ytw0Nf2jlYPLhvHZpCCy0J65LEXDYJq'
 
-tokens = oauth_wizard(CLIENT_ID, CLIENT_SECRET)
+tokens = oauth_wizard(CLIENT_ID, CLIENT_SECRET, 65010, 'http://localhost:65010/integrations/zoom')
+
+print(tokens)
 
 ZOOM_ACCESS_TOKEN = tokens['access_token']
 
@@ -86,7 +88,7 @@ start_time = datetime.datetime(2024, 4, 30, 10, 0)
 
 def createMeeting(creator, start_time):
     headers = {
-        'authorization': f"{tokens}",
+        'authorization': f"{tokens['refresh_token']}",
         'content-type': 'application/json'
     }
 
