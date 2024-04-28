@@ -47,7 +47,7 @@ def register_user(userinfo: telebot.types.Message) -> bool:
     try:
         c = conn.cursor()
         c.execute(f"INSERT INTO users (id, name) VALUES (?, ?)",
-                  (userinfo.chat.id, userinfo.from_user.username))
+                  (str(userinfo.chat.id), str(userinfo.from_user.username.lower()).replace('@', '')))
         conn.commit()
         return True
     except sqlite3.Error as e:
@@ -56,9 +56,9 @@ def register_user(userinfo: telebot.types.Message) -> bool:
 
 def check_user_exist_by_username(username) -> bool:
     c = conn.cursor()
-    c.execute(f"SELECT name FROM users WHERE id={username}")
-    found_username = c.fetchall()
-    if found_username:
+    c.execute(f"SELECT id FROM users WHERE name={str(username.replace('@', ''))}")
+    found_id = c.fetchone()
+    if found_id:
         return True
     else:
         return False

@@ -22,13 +22,8 @@ import asyncio
 
 
 async def main():
-    async def get_meeting_link(*args):
-        pass
-
-    async def invited_users_checker(userlist):
-        for username in userlist:
-            if database_users.check_user_exist_by_username(username):
-                pass
+    def get_meeting_link(*args):
+        return 'https://www.youtube.com'
 
     async def sendmeetinfo(meet: Meeting) -> bool:
         try:
@@ -56,11 +51,9 @@ async def main():
                     logs.write(f'{time.hour}:{time.minute}:{time.second}: '
                                f'Ошибка регистрации {message.from_user.username} \n')
 
-
     @BOT.message_handler(commands=['instructions', 'instruct', 'inst'])
     async def instructions(message):
         await BOT.send_message(message.chat.id, text=config.INSTRUCTIONS)
-
 
     @BOT.message_handler(commands=['meet'])
     async def meet(message):
@@ -80,23 +73,30 @@ async def main():
                                            'c_args': list(),
                                            'useridslist': list(),
                                            'meet': Meeting()}})
+
         tempdata[message.chat.id]['c_args'] = list(map(str, message.text.split()))[1:]
+
         for arg in tempdata[message.chat.id]['c_args']:
-            print(arg)
             if '@' in arg:
                 tempdata[message.chat.id]['members_list'].append(arg)
             else:
                 tempdata[message.chat.id]['timeargs'].append(arg)
+            tempdata[message.chat.id]['members_list'].append(message.from_user.username)
+
         if not tempdata[message.chat.id]['timeargs']:
             tempdata[message.chat.id]['meet'].add_creator(message.chat.id)
-            tempdata[message.chat.id]['meet'].add_link(get_meeting_link())
+            tempdata[message.chat.id]['meet'].add_link("youtube.com")  # тут добавляется ссылка на митинг вот оновот
             tempdata[message.chat.id]['meet'].add_members(tempdata[message.chat.id]['members_list'])
-            if not (invited_users_checker(tempdata[message.chat.id]['members_list'])):
-                await BOT.send_message(message.chat.id, text='❗ Не все приглашенные пользователи '
-                                                             'зарегистрировались в этом боте')
-                return
+            print(tempdata[message.chat.id]['members_list'])
+            for username in tempdata[message.chat.id]['members_list']:
+                if not database_users.check_user_exist_by_username(str(username)):
+                    await BOT.send_message(message.chat.id, text='❗ Не все приглашенные пользователи '
+                                                                 'зарегистрировались в этом боте')
+                    return
             if await sendmeetinfo(tempdata[message.chat.id]['meet']):
                 await BOT.send_message(message.chat.id, text='ℹ️ Приглашения успешно отправлены')
+            else:
+                print('no')
 
         else:
             if not dateconv.checkdate(tempdata[message.chat.id]['timeargs']):

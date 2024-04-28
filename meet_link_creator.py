@@ -13,7 +13,7 @@ API_SEC = 'TPUt9gOJXnaPtkSGeLZDz6wTw4NA79kC'
 def generateToken():
     payload = {
         'iss': API_KEY,
-        'exp': int(datetime.datetime.utcnow().timestamp()) + 3600  # Token expires in 1 hour
+        'exp': int(datetime.datetime.utcnow().timestamp()) + 10900  # Token expires in 1 hour
     }
 
     header = {
@@ -78,6 +78,7 @@ if __name__ == "__main__":
     start_time = datetime.datetime(2024, 4, 30, 10, 0)  # Example: April 30, 2024, 10:00 AM
 
     join_url, password = createMeeting(creator, start_time)
+    print(join_url, password)
     if join_url:
         print("Meeting created successfully!")
         print("Join URL:", join_url)
