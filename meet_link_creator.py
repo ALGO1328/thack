@@ -15,10 +15,9 @@ auth = b"ghwuvh95Rd2tLtfzA1s_0w:CfI2vDSgbiIo8hpELrOuN1O1CQfPgP0s" # Client_ID + 
 def generateToken(mail: str):
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": f"Basic {base64.urlsafe_b64encode(auth)}"
-
+        "Authorization": f"Basic Z2h3dXZoOTVSZDJ0THRmekExc18wdzpDZkkydkRTZ2JpSW84aHBFTHJPdU4xTzFDUWZQZ1Awcw"
     }
-
+    print(headers)
     body = {
         "grant_type": "account_credentials",
         "account_id": f"{mail}"
@@ -30,7 +29,6 @@ def generateToken(mail: str):
     print(return_data)
     access_token = return_data["access_token"]
     return access_token
-
 
 def createMeeting(creator, start_time):
     headers = {
