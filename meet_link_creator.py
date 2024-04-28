@@ -9,13 +9,13 @@ mail = 'damir.riyatov@gmail.com'# will be creator mail
 Client_secret = 'CfI2vDSgbiIo8hpELrOuN1O1CQfPgP0s'
 Client_ID = 'ghwuvh95Rd2tLtfzA1s_0w'
 
-auth = Client_ID + ':' + Client_secret
+auth = b"ghwuvh95Rd2tLtfzA1s_0w:CfI2vDSgbiIo8hpELrOuN1O1CQfPgP0s" # Client_ID + ':' + Client_secret
 
 
 def generateToken(mail: str):
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": f"Basic {base64.b64encode(json.dumps(auth).encode()).decode().strip('=')}"
+        "Authorization": f"Basic {base64.urlsafe_b64encode(auth)}"
 
     }
 
